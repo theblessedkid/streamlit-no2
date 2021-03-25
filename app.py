@@ -1,14 +1,17 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-from get_data import get_kanye_quote
+from get_data import get_kanye_quote, get_nice_qoute
 
 plt.rcParams.update({'font.size': 22})
 
 "# My first attempt at a streamlit app"
 
-st.sidebar.write('*Kanye Once Said*:')
-st.sidebar.write(f'>{get_kanye_quote()}')
+author, quote = get_nice_qoute()
+
+st.sidebar.write(f'>{quote}')
+st.sidebar.write(f'*{author}*')
+
 
 color_list = ['#c23616',
               '#8c7ae6',
@@ -44,6 +47,10 @@ def load_data_from_url(url):
                                   'FemaleBonusPercent': 'Bonus recieved by Women (%)',
                                   'MaleLowerQuartile': 'Men in the Lower Salary Quartile (%)',
                                   'FemaleLowerQuartile': 'Women in the Lower Salary Quartile (%)',
+                                  'MaleLowerMiddleQuartile': 'Men in the Lower Middle Salary Quartile (%)',
+                                  'FemaleLowerMiddleQuartile': 'Women in the Lower Middle Salary Quartile (%)',
+                                  'MaleUpperMiddleQuartile': 'Men in the Upper Middle Salary Quartile (%)',
+                                  'FemaleUpperMiddleQuartile': 'Women in the Upper Middle Salary Quartile (%)',
                                   'MaleTopQuartile': 'Men in the Top Salary Quartile (%)',
                                   'FemaleTopQuartile': 'Women in the Top Salary Quartile (%)'},
                          inplace=True)
@@ -98,6 +105,7 @@ def plot_top_10(metric, filtered_df):
     plt.axvline(df.describe().at['mean', metric],
                 label=f"UK average {metric} (all sectors)", color='tan')
     plt.legend(loc="lower left")
+    plt.box(False)
     plt.ylabel("")
     plt.tight_layout()
 
@@ -107,18 +115,21 @@ def plot_top_10(metric, filtered_df):
     st.pyplot(fig1)
 
 
-year = st.sidebar.radio(
-    "Year",
-    ('2017', '2018', '2019', '2020'))
 
+# Loading data
 url_dict = {'2017': "https://gender-pay-gap.service.gov.uk/viewing/download-data/2017",
             '2018': "https://gender-pay-gap.service.gov.uk/viewing/download-data/2018",
             '2019': "https://gender-pay-gap.service.gov.uk/viewing/download-data/2019",
             '2020': "https://gender-pay-gap.service.gov.uk/viewing/download-data/2020"}
 
+year = st.sidebar.radio(
+    "Year",
+    ('2017', '2018', '2019', '2020'))
+
 URL = url_dict[year]
 df = load_data_from_url(URL)
 
+# Dataframe split by location
 london = df[df["Address"].str.contains("London") == True]
 liverpool = df[df["Address"].str.contains("Liverpool")
                | df["Address"].str.contains("Merseyside")]
@@ -131,14 +142,27 @@ midlands = df[df["Address"].str.contains("Coventry")
               | df["Address"].str.contains("Hertfordshire")
               | df["Address"].str.contains("West Midlands")]
 
+
+# Dataframe split by sector
+football = df[df["EmployerName"].str.contains("FOOTBALL")
+              | df["EmployerName"].str.contains("Football")]
+bank = df[df['EmployerName'].str.contains("BANK")
+          | (df["EmployerName"].str.contains("Bank") &
+             (~df["EmployerName"].str.contains("University")))]
+nhs = df[df['EmployerName'].str.contains('NHS') == True]
+university = df[df["SicCodes"].str.contains("85421") |
+                (df["EmployerName"].str.contains("University") &
+                 (~df["EmployerName"].str.contains("Hospital") &
+                  ~df["EmployerName"].str.contains("Union", case=False)))]
+
+
 st.write(f"The data has {df.shape[1]} features from {df.shape[0]} employers. It looks like this.")
-st.dataframe(df)
+if st.checkbox('Show dataframe'):
+    st.dataframe(df)
 
 '### Plotting difference in pay across all employers for different regions'
 metrics = [col for col in df.columns if df[col].dtype == float]
 option = st.selectbox('Difference: ', metrics)
-
-# fig, ax = plt.subplots()
 
 ax = plt.figure(figsize=(20, 14))
 plt.hist(df[option], bins=200)
@@ -164,15 +188,6 @@ plt.legend()
 st.pyplot(ax)
 
 '### The largest gaps in certain sectors'
-
-football = df[df["EmployerName"].str.contains("FOOTBALL") | df["EmployerName"].str.contains("Football")]
-bank = df[df['EmployerName'].str.contains("BANK") | (df["EmployerName"].str.contains("Bank") &
-                                                     (~df["EmployerName"].str.contains("University")))]
-nhs = df[df['EmployerName'].str.contains('NHS') == True]
-university = df[df["SicCodes"].str.contains("85421") |
-                (df["EmployerName"].str.contains("University") &
-                 (~df["EmployerName"].str.contains("Hospital") &
-                  ~df["EmployerName"].str.contains("Union", case=False)))]
 
 df_dict = {'Football': football,
            'Banking': bank,
