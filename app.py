@@ -105,10 +105,10 @@ def plot_top_10(metric, filtered_df):
 
     plt.axvline(filtered_df.describe().at['mean', metric],
                 label=f"average {metric} across sector", color=color_list[4],
-                linewidth=10, alpha=0.5)
+                linewidth=10, alpha=0.7)
     plt.axvline(df.describe().at['mean', metric],
-                label=f"UK average {metric} (all sectors)", color=color_list[5],
-                linewidth=10, alpha=0.5)
+                label=f"UK average {metric} (all sectors)", color=color_list[7],
+                linewidth=10, alpha=0.7)
     plt.legend(bbox_to_anchor=(0, 1, 1, 0),loc="lower left")
     plt.box(False)
     plt.ylabel("")
@@ -177,16 +177,16 @@ plt.hist(midlands[option], bins=200)
 
 plt.axvline(df.describe().at['mean', option],
             color=color_list[3], label='UK mean',
-            linewidth=10, alpha=0.5)
+            linewidth=10, alpha=0.7)
 plt.axvline(london.describe().at['mean', option],
             color=color_list[2], label='London mean',
-            linewidth=10, alpha=0.5)
+            linewidth=10, alpha=0.7)
 plt.axvline(liverpool.describe().at['mean', option],
             color=color_list[1], label='Liverpool mean',
-            linewidth=10, alpha=0.5)
+            linewidth=10, alpha=0.7)
 plt.axvline(midlands.describe().at['mean', option],
             color=color_list[0], label='Midlands mean',
-            linewidth=10, alpha=0.5)
+            linewidth=10, alpha=0.7)
 
 plt.xlim(-50, 70)
 plt.xlabel(option)
