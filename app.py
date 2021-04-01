@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-from get_data import get_kanye_quote, get_nice_qoute
+from api_funcs import get_kanye_quote, get_nice_qoute
 
 plt.rcParams.update({'font.size': 22})
 
