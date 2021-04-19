@@ -12,7 +12,6 @@ author, quote = get_nice_qoute()
 st.sidebar.write(f'>{quote}')
 st.sidebar.write(f'*{author}*')
 
-
 color_list = ['#c23616',
               '#8c7ae6',
               '#dcdde1',
@@ -62,24 +61,6 @@ def load_data_from_url(url):
     return dataframe
 
 
-
-# def plot_hist(dataframe, metric, color, label):
-#     """ """
-#
-#
-#
-#     fig, ax = plt.subplots()
-#     ax.hist(dataframe[metric], bins=200)
-#
-#     plt.axvline(dataframe.describe().at['mean', metric],
-#                 color=color, label=label)
-#
-#     ax.set_xlim(-50, 70)
-#
-#     ax.set_xlabel(option)
-#     return None
-
-
 def plot_top_10(metric, filtered_df):
     """
     Create a bar chart for the top 20 of a given metric in dataframe.
@@ -109,7 +90,7 @@ def plot_top_10(metric, filtered_df):
     plt.axvline(df.describe().at['mean', metric],
                 label=f"UK average {metric} (all sectors)", color=color_list[7],
                 linewidth=10, alpha=0.7)
-    plt.legend(bbox_to_anchor=(0, 1, 1, 0),loc="lower left")
+    plt.legend(bbox_to_anchor=(0, 1, 1, 0), loc="lower left")
     plt.box(False)
     plt.ylabel("")
     plt.tight_layout()
@@ -118,7 +99,6 @@ def plot_top_10(metric, filtered_df):
         plt.text(v + 0.1, i - 0.1, str(v))
 
     st.pyplot(fig1)
-
 
 
 # Loading data
@@ -147,7 +127,6 @@ midlands = df[df["Address"].str.contains("Coventry")
               | df["Address"].str.contains("Hertfordshire")
               | df["Address"].str.contains("West Midlands")]
 
-
 # Dataframe split by sector
 football = df[df["EmployerName"].str.contains("FOOTBALL")
               | df["EmployerName"].str.contains("Football")]
@@ -159,7 +138,6 @@ university = df[df["SicCodes"].str.contains("85421") |
                 (df["EmployerName"].str.contains("University") &
                  (~df["EmployerName"].str.contains("Hospital") &
                   ~df["EmployerName"].str.contains("Union", case=False)))]
-
 
 st.write(f"The data has {df.shape[1]} features from {df.shape[0]} employers. It looks like this.")
 if st.checkbox('Show dataframe'):
@@ -209,4 +187,5 @@ sector = st.radio(
 
 plot_top_10(option, df_dict[sector])
 
-st.sidebar.write('The source for this data can be found [here](https://gender-pay-gap.service.gov.uk/). The code is adapted from [this notebook](https://colab.research.google.com/drive/1pA7IfUcZjG64pAn5Dw5bUsnYdo1KNXZ2?usp=sharing), provided by the wonderful HiPy program.')
+st.sidebar.write(
+    'The source for this data can be found [here](https://gender-pay-gap.service.gov.uk/). The code is adapted from [this notebook](https://colab.research.google.com/drive/1pA7IfUcZjG64pAn5Dw5bUsnYdo1KNXZ2?usp=sharing), provided by the wonderful HiPy program.')

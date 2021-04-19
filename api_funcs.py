@@ -44,12 +44,13 @@ kanye_quote = get_kanye_quote()
 def get_nice_qoute():
     """Get a nice qoute."""
     response = requests.request('GET',
-                            'https://api.forismatic.com/api/1.0/?method=getQuote&lang=en&format=json')
+                                'https://api.forismatic.com/api/1.0/?method=getQuote&lang=en&format=json')
     if response.status_code != 200:
         print(response.status_code)
     author = json.loads(response.text)['quoteAuthor']
     quote = json.loads(response.text)['quoteText']
 
     return author, quote
+
 
 my_qoute, my_author = get_nice_qoute()
